@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arpa — Show it once. Arpa runs it.</title>
+<meta name="description" content="Arpa watches a colleague do a process on screen, compiles it into a reliable workflow, and runs it on a fleet of computer-use agents in the apps you already have. No APIs. People in the loop. EU-first and on-prem.">
+<meta property="og:title" content="Arpa — Show it once. Arpa runs it.">
+<meta property="og:description" content="Agentic RPA for any process done on a screen: record it once, compile it into a cheap, reliable workflow, run it on a fleet of computer-use agents.">
+<meta property="og:image" content="assets/demo-poster.webp">
+<meta name="theme-color" content="#12100d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f7bff'/%3E%3Cstop offset='1' stop-color='%232340b8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M22 15l24 18-11 2 7 13-5 3-7-13-8 8z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #fbf9f6;
+  --paper-2: #f4f0ea;
+  --ink: #171512;
+  --ink-2: #2a2622;
+  --muted: #5e5850;
+  --faint: #8c857b;
+  --line: #e7e1d8;
+  --line-2: #ddd5ca;
+  --accent: #2f5bd8;
+  --accent-2: #4f7bff;
+  --accent-soft: #e8eefc;
+  --human: #d9822b;
+  --good: #1f8a5b;
+  --night: #12100d;
+  --night-2: #1b1814;
+  --night-line: rgba(255, 255, 255, .09);
+  --night-muted: #a39b8f;
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --wrap: 1180px;
+  --r: 18px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: hidden; }
+img, video { display: block; max-width: 100%; }
+a { color: inherit; }
+.wrap { width: min(var(--wrap), 100% - 40px); margin-inline: auto; }
+.eyebrow { font: 500 12.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.serif { font-family: var(--serif); font-weight: 400; font-style: italic; letter-spacing: -.01em; }
+h1, h2, h3 { margin: 0; letter-spacing: -.028em; font-weight: 600; }
+h2 { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.06; }
+h3 { font-size: 20px; letter-spacing: -.015em; line-height: 1.3; }
+p { margin: 0; }
+.lead { font-size: clamp(17px, 1.6vw, 20px); color: var(--muted); line-height: 1.6; }
+
+/* ------------------------------------------------------------------ nav */
+.nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, border-color .3s, backdrop-filter .3s; border-bottom: 1px solid transparent; }
+.nav.solid { background: rgba(18, 16, 13, .72); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px); border-bottom-color: var(--night-line); }
+.nav .wrap { display: flex; align-items: center; gap: 28px; height: 68px; }
+.brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 650; font-size: 19px; letter-spacing: -.02em; }
+.brand svg { width: 28px; height: 28px; filter: drop-shadow(0 4px 14px rgba(79, 123, 255, .45)); }
+.nav nav { display: flex; gap: 26px; margin-left: 18px; }
+.nav nav a { color: rgba(255, 255, 255, .7); text-decoration: none; font-size: 14.5px; transition: color .2s; }
+.nav nav a:hover { color: #fff; }
+.nav .cta { margin-left: auto; }
+.btn { display: inline-flex; align-items: center; gap: 9px; height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 var(--sans); text-decoration: none; letter-spacing: -.01em; transition: transform .2s, background .2s, box-shadow .2s, color .2s; white-space: nowrap; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: #fff; color: var(--ink); box-shadow: 0 1px 0 rgba(255,255,255,.4) inset, 0 8px 30px rgba(79, 123, 255, .25); }
+.btn-primary:hover { box-shadow: 0 1px 0 rgba(255,255,255,.4) inset, 0 10px 40px rgba(79, 123, 255, .45); }
+.btn-ghost { color: #fff; background: rgba(255,255,255,.06); box-shadow: 0 0 0 1px rgba(255,255,255,.14) inset; }
+.btn-ghost:hover { background: rgba(255,255,255,.11); }
+.btn-sm { height: 38px; padding: 0 16px; font-size: 14px; }
+.btn svg { width: 16px; height: 16px; }
+
+/* ------------------------------------------------------------------ hero */
+.hero { position: relative; background: var(--night); color: #fff; padding: 150px 0 0; overflow: hidden; isolation: isolate; }
+.hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 1100px; z-index: -1;
+  background:
+    radial-gradient(600px 420px at 50% 32%, rgba(79, 123, 255, .34), transparent 70%),
+    radial-gradient(520px 360px at 78% 18%, rgba(217, 130, 43, .16), transparent 70%),
+    radial-gradient(520px 360px at 18% 22%, rgba(79, 123, 255, .16), transparent 70%); }
+.hero::after { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 64px 64px; mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%); }
+.hero-copy { text-align: center; max-width: 920px; margin-inline: auto; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(255,255,255,.06); box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset; font-size: 13.5px; color: rgba(255,255,255,.82); }
+.pill b { font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; background: linear-gradient(135deg, var(--accent-2), var(--accent)); color: #fff; }
+.hero h1 { font-size: clamp(46px, 7.4vw, 92px); line-height: .98; letter-spacing: -.045em; margin: 26px 0 0; font-weight: 600; }
+.hero h1 .serif { font-size: 1.08em; letter-spacing: -.02em; background: linear-gradient(120deg, #c9d6ff 10%, #fff 45%, #ffd9b0 95%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+.hero .lead { color: rgba(255,255,255,.72); max-width: 720px; margin: 26px auto 0; font-size: clamp(17px, 1.7vw, 21px); }
+.hero-ctas { display: flex; gap: 12px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+.stage { position: relative; margin: 72px auto 0; width: min(1120px, 100% - 40px); }
+.stage::before { content: ""; position: absolute; inset: 8% 6% -4%; background: radial-gradient(closest-side, rgba(79, 123, 255, .55), transparent); filter: blur(60px); z-index: -1; }
+.window { border-radius: 16px 16px 0 0; overflow: hidden; background: #0c0b09; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 40px 120px -20px rgba(0,0,0,.8); }
+.window-bar { height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: linear-gradient(#211d18, #1a1713); border-bottom: 1px solid rgba(255,255,255,.07); }
+.window-bar i { width: 11px; height: 11px; border-radius: 50%; background: #3a342d; }
+.window-bar span { margin: 0 auto; font: 500 12px/1 var(--mono); color: rgba(255,255,255,.45); letter-spacing: .02em; display: flex; gap: 8px; align-items: center; }
+.window-bar span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #3ccf8e; box-shadow: 0 0 10px #3ccf8e; }
+.window video { width: 100%; aspect-ratio: 1440 / 900; background: #0c0b09; }
+.hero-fade { position: absolute; inset: auto 0 0; height: 160px; background: linear-gradient(transparent, var(--night)); pointer-events: none; }
+
+/* ------------------------------------------------------------------ stats */
+.stats { background: var(--night); color: #fff; padding: 0 0 96px; position: relative; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--night-line); }
+.stat { padding: 34px 28px 0 0; }
+.stat + .stat { padding-left: 28px; border-left: 1px solid var(--night-line); }
+.stat .n { font-size: clamp(36px, 4.2vw, 54px); font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .n small { font-size: .5em; letter-spacing: -.02em; color: var(--night-muted); font-weight: 500; }
+.stat p { margin-top: 12px; color: var(--night-muted); font-size: 15px; line-height: 1.5; }
+.stats .note { margin-top: 30px; font-size: 13px; color: rgba(255,255,255,.4); }
+
+/* ------------------------------------------------------------------ apps strip */
+.apps { padding: 84px 0 0; text-align: center; }
+.apps p { color: var(--faint); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line) inset, 0 1px 2px rgba(23,21,18,.04); font-size: 14.5px; color: var(--ink-2); }
+.chip svg { width: 16px; height: 16px; color: var(--accent); }
+.chip em { font-style: normal; font: 500 11px/1 var(--mono); color: var(--human); letter-spacing: .04em; }
+
+/* ------------------------------------------------------------------ sections */
+section.block { padding: 130px 0 0; }
+.head { max-width: 760px; }
+.head h2 { margin-top: 18px; }
+.head .lead { margin-top: 20px; }
+.head.center { text-align: center; margin-inline: auto; }
+
+/* steps */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 60px; counter-reset: s; }
+.step { position: relative; padding: 28px 26px 30px; border-radius: var(--r); background: #fff; box-shadow: 0 0 0 1px var(--line) inset, 0 1px 2px rgba(23,21,18,.04); }
+.step .k { display: flex; align-items: center; gap: 12px; }
+.step .k b { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font: 600 14px/1 var(--mono); color: #fff; background: linear-gradient(135deg, var(--accent-2), var(--accent)); box-shadow: 0 6px 18px rgba(47, 91, 216, .35); }
+.step h3 { margin-top: 20px; font-size: 22px; }
+.step p { margin-top: 10px; color: var(--muted); font-size: 15.5px; }
+.step .tag { margin-top: 18px; display: inline-flex; font: 500 12px/1 var(--mono); color: var(--faint); letter-spacing: .02em; }
+
+/* feature rows */
+.feature { display: grid; grid-template-columns: 1fr 1.35fr; gap: 64px; align-items: center; margin-top: 110px; }
+.feature.flip { grid-template-columns: 1.35fr 1fr; }
+.feature.flip .copy { order: 2; }
+.feature .copy h3 { font-size: clamp(26px, 2.8vw, 34px); letter-spacing: -.03em; line-height: 1.12; margin-top: 14px; }
+.feature .copy > p { margin-top: 16px; color: var(--muted); font-size: 17px; }
+.ticks { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 12px; }
+.ticks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; font-size: 15.5px; color: var(--ink-2); }
+.ticks li::before { content: ""; width: 18px; height: 18px; margin-top: 3px; border-radius: 6px; background: var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%232f5bd8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat; }
+.ticks.human li::before { background-color: #fbeedf; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%23c26a14' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+.shot { position: relative; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px var(--line-2), 0 30px 80px -30px rgba(40, 30, 15, .35), 0 12px 30px -18px rgba(40, 30, 15, .25); transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; }
+.shot:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line-2), 0 40px 90px -30px rgba(40, 30, 15, .4), 0 14px 34px -18px rgba(40, 30, 15, .28); }
+.shot img { width: 100%; height: auto; }
+.shot figcaption { position: absolute; left: 14px; bottom: 14px; padding: 7px 11px; border-radius: 9px; background: rgba(23, 21, 18, .82); color: #fff; font-size: 12.5px; backdrop-filter: blur(6px); }
+
+/* ------------------------------------------------------------------ ladder (dark) */
+.dark { background: var(--night); color: #fff; margin-top: 140px; padding: 120px 0 120px; position: relative; overflow: hidden; isolation: isolate; }
+.dark::before { content: ""; position: absolute; inset: -30% 20% auto; height: 700px; background: radial-gradient(closest-side, rgba(79, 123, 255, .22), transparent); z-index: -1; }
+.dark .lead { color: var(--night-muted); }
+.dark .eyebrow { color: #8fa9ff; }
+.ladder { margin-top: 64px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+.rung { position: relative; padding: 22px 18px 20px; border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025)); box-shadow: 0 0 0 1px var(--night-line) inset; display: flex; flex-direction: column; min-height: 230px; }
+.rung .t { font: 500 11.5px/1 var(--mono); color: rgba(255,255,255,.45); letter-spacing: .08em; }
+.rung h4 { margin: 12px 0 0; font-size: 17px; letter-spacing: -.015em; font-weight: 600; }
+.rung p { margin-top: 8px; color: var(--night-muted); font-size: 13.5px; line-height: 1.5; }
+.rung .cost { margin-top: auto; padding-top: 18px; font: 500 12.5px/1 var(--mono); color: #cdd7ff; }
+.rung.hot { background: linear-gradient(180deg, rgba(79,123,255,.22), rgba(79,123,255,.06)); box-shadow: 0 0 0 1px rgba(143, 169, 255, .35) inset; }
+.rung.person { background: linear-gradient(180deg, rgba(217,130,43,.2), rgba(217,130,43,.05)); box-shadow: 0 0 0 1px rgba(255, 190, 120, .3) inset; }
+.rung.person .cost { color: #ffd2a1; }
+.rung::after { content: ""; position: absolute; right: -9px; top: 50%; width: 8px; height: 1px; background: rgba(255,255,255,.2); }
+.rung:last-child::after { display: none; }
+.mix { margin-top: 56px; display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: end; }
+.mix h4 { margin: 0 0 14px; font-size: 15px; font-weight: 500; color: rgba(255,255,255,.8); }
+.bar { display: flex; height: 44px; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px var(--night-line) inset; }
+.bar span { display: flex; align-items: center; padding: 0 12px; font: 500 12.5px/1 var(--mono); color: rgba(255,255,255,.92); white-space: nowrap; overflow: hidden; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 13px; color: var(--night-muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 7px; vertical-align: 0; }
+.mix .side p { color: var(--night-muted); font-size: 15px; }
+.mix .side b { color: #fff; font-weight: 600; }
+
+/* ------------------------------------------------------------------ proof */
+.proof { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; }
+.card { padding: 26px 24px 24px; border-radius: var(--r); background: #fff; box-shadow: 0 0 0 1px var(--line) inset, 0 1px 2px rgba(23,21,18,.04); display: flex; flex-direction: column; }
+.card .score { display: flex; align-items: baseline; gap: 8px; margin-top: 18px; }
+.card .score b { font-size: 46px; font-weight: 600; letter-spacing: -.045em; line-height: 1; font-variant-numeric: tabular-nums; }
+.card .score span { color: var(--good); font: 600 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.card h3 { font-size: 17.5px; }
+.card .what { margin-top: 12px; color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+.card dl { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 13.5px; }
+.card dt { color: var(--faint); }
+.card dd { margin: 0; text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+.card .k { font: 500 11.5px/1 var(--mono); color: var(--faint); letter-spacing: .06em; text-transform: uppercase; }
+.method { margin-top: 22px; color: var(--faint); font-size: 14px; max-width: 820px; }
+
+/* ------------------------------------------------------------------ trust */
+.trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
+.trust .card { padding: 26px 24px; }
+.trust .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.trust .ic svg { width: 21px; height: 21px; }
+.trust h3 { margin-top: 18px; }
+.trust p { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+/* deploy */
+.deploy { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 56px; }
+.deploy .card { padding: 30px; }
+.deploy .card h3 { font-size: 22px; margin-top: 14px; }
+.deploy .card p { margin-top: 10px; color: var(--muted); font-size: 15.5px; }
+.deploy code { font: 500 13px/1.6 var(--mono); background: var(--paper-2); padding: 2px 7px; border-radius: 6px; color: var(--ink-2); }
+.deploy .status { font: 600 11.5px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.deploy .status.now { color: var(--good); }
+.deploy .status.soon { color: var(--human); }
+
+/* ------------------------------------------------------------------ final */
+.final { margin-top: 140px; background: var(--night); color: #fff; padding: 130px 0 70px; text-align: center; position: relative; overflow: hidden; isolation: isolate; }
+.final::before { content: ""; position: absolute; left: 50%; top: 10%; width: 900px; height: 500px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(79, 123, 255, .35), transparent); z-index: -1; filter: blur(10px); }
+.final h2 { font-size: clamp(40px, 6vw, 76px); letter-spacing: -.045em; line-height: 1; }
+.final h2 .serif { color: #cdd7ff; }
+.final .lead { color: var(--night-muted); max-width: 620px; margin: 22px auto 0; }
+.final .hero-ctas { margin-top: 34px; }
+footer { margin-top: 110px; padding-top: 28px; border-top: 1px solid var(--night-line); display: flex; justify-content: space-between; gap: 20px; color: rgba(255,255,255,.4); font-size: 13.5px; text-align: left; }
+footer .brand { font-size: 16px; }
+footer .brand svg { width: 22px; height: 22px; }
+
+/* ------------------------------------------------------------------ motion */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+.reveal.in { opacity: 1; transform: none; }
+.d1 { transition-delay: .08s; } .d2 { transition-delay: .16s; } .d3 { transition-delay: .24s; } .d4 { transition-delay: .32s; } .d5 { transition-delay: .4s; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .shot, .btn { transition: none; }
+}
+
+/* ------------------------------------------------------------------ responsive */
+@media (max-width: 1080px) {
+  .ladder { grid-template-columns: repeat(3, 1fr); }
+  .rung::after { display: none; }
+  .proof { grid-template-columns: repeat(2, 1fr); }
+  .mix { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .nav nav { display: none; }
+  .steps, .trust, .deploy { grid-template-columns: 1fr; }
+  .feature, .feature.flip { grid-template-columns: 1fr; gap: 34px; margin-top: 80px; }
+  .feature.flip .copy { order: 0; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(3) { padding-left: 0; border-left: 0; }
+  .stat:nth-child(n+3) { margin-top: 10px; border-top: 1px solid var(--night-line); }
+}
+@media (max-width: 560px) {
+  .wrap { width: calc(100% - 32px); }
+  .hero { padding-top: 120px; }
+  .stage { width: calc(100% - 24px); margin-top: 52px; }
+  .window-bar span { display: none; }
+  .ladder, .proof { grid-template-columns: 1fr; }
+  .rung { min-height: 0; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat, .stat + .stat { padding: 26px 0 0; border-left: 0; }
+  .stat + .stat { border-top: 1px solid var(--night-line); margin-top: 26px; }
+  .bar span { font-size: 0; padding: 0; }
+  section.block { padding-top: 96px; }
+  .nav .cta .btn { height: 36px; padding: 0 14px; font-size: 13.5px; }
+  footer { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f7bff"/><stop offset="1" stop-color="#2340b8"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="url(#mark)"/><path d="M22 15l24 18-11 2 7 13-5 3-7-13-8 8z" fill="#fff"/><circle cx="47" cy="17" r="4" fill="#ffd2a1"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Arpa home"><svg aria-hidden="true"><use href="#logo"/></svg>Arpa</a>
+    <nav aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#ladder">Why it's cheap</a>
+      <a href="#people">People in the loop</a>
+      <a href="#proof">Proof</a>
+      <a href="#trust">Trust</a>
+    </nav>
+    <div class="cta"><a class="btn btn-primary btn-sm" href="#demo">Watch the demo</a></div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================ HERO -->
+  <section class="hero">
+    <div class="wrap hero-copy">
+      <span class="pill reveal"><b>Private preview</b> Agentic RPA for any process done on a screen</span>
+      <h1 class="reveal d1">Show it once.<br><span class="serif">Arpa</span> runs it.</h1>
+      <p class="lead reveal d2">A colleague does the process once, explaining as they go. Arpa compiles the recording into a reliable workflow and runs it on a fleet of computer-use agents, inside the apps you already have. No APIs, no integration project, people in the loop.</p>
+      <div class="hero-ctas reveal d3">
+        <a class="btn btn-primary" href="#demo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg>Watch it work</a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+    <div class="stage reveal d4" id="demo">
+      <div class="window">
+        <div class="window-bar"><i></i><i></i><i></i><span>Arpa console · live run, unedited (waits sped up)</span></div>
+        <video src="assets/arpa-demo.mp4" poster="assets/demo-poster.webp" autoplay muted loop playsinline preload="metadata" aria-label="Demo: Arpa queues a supplier invoice, a sandboxed worker books it in a legacy ERP, a person approves the save, the result is checked in the ERP, and an e-mailed invoice becomes new work"></video>
+      </div>
+    </div>
+    <div class="hero-fade"></div>
+  </section>
+
+  <section class="stats" aria-label="Measured results">
+    <div class="wrap">
+      <div class="stats-grid">
+        <div class="stat reveal"><div class="n">33<small>/33</small></div><p>items passed across three legacy-app scenarios, checked against each app's own data</p></div>
+        <div class="stat reveal d1"><div class="n">&lt;2<small>¢</small></div><p>model cost per item (€0.004 to €0.017 measured), including the AI reviewer that checks the work</p></div>
+        <div class="stat reveal d2"><div class="n">~90<small>%</small></div><p>of steps replay deterministically, in milliseconds, without calling a model</p></div>
+        <div class="stat reveal d3"><div class="n">0</div><p>passwords or one-time codes ever shown to a model. Secrets are typed by the worker and masked in every frame</p></div>
+      </div>
+      <p class="note reveal">Measured on our Legacy Lab: deliberately awkward web apps with pop-ups, expiring sessions, iframes, 2FA and SSO.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ APPS -->
+  <div class="wrap apps">
+    <p class="reveal">Built for the software nobody wants to integrate with</p>
+    <div class="chips reveal d1">
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 5.5h13" stroke="currentColor" stroke-width="1.5"/></svg>Legacy web ERPs</span>
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l5.5 2.5v4c0 3.2-2.3 5.6-5.5 6.5C4.8 13.6 2.5 11.2 2.5 8V4z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Bank portals with 2FA</span>
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="6" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M3 14c.8-2.6 2.8-4 5-4s4.2 1.4 5 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Intranets behind SSO</span>
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.5h11v9h-11z M2.5 4l5.5 4 5.5-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Mailboxes and PDFs</span>
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Windows thick clients <em>PREVIEW</em></span>
+      <span class="chip"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3c-2 1.5-2 8.5 0 10M11 3c2 1.5 2 8.5 0 10M6 8h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Java desktop apps <em>PREVIEW</em></span>
+    </div>
+  </div>
+
+  <!-- ============================================================ HOW -->
+  <section class="block" id="how">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>From one demonstration to a <span class="serif">fleet</span> that does the work.</h2>
+        <p class="lead">Traditional RPA needs developers to script every click. Pure AI agents improvise every click, slowly and expensively. Arpa learns the process once from the people who know it, then runs it the cheap way, with AI only where it adds something.</p>
+      </div>
+      <div class="steps">
+        <article class="step reveal">
+          <div class="k"><b>1</b><span class="eyebrow">Record</span></div>
+          <h3>Do it once, out loud</h3>
+          <p>The desktop recorder captures the screen, every click and keystroke, the app's accessibility tree and the narration. Passwords and personal data are blurred on the device, before anything is uploaded.</p>
+          <span class="tag">macOS today · Windows in preview</span>
+        </article>
+        <article class="step reveal d1">
+          <div class="k"><b>2</b><span class="eyebrow">Compile</span></div>
+          <h3>A workflow, not a video</h3>
+          <p>Arpa infers the inputs, the decisions and the checks. Steps that never change become deterministic, judgement calls follow your policy documents, and sensitive steps wait for approval. No hand edits are needed.</p>
+          <span class="tag">recording → published process in minutes</span>
+        </article>
+        <article class="step reveal d2">
+          <div class="k"><b>3</b><span class="eyebrow">Run</span></div>
+          <h3>A fleet that asks when unsure</h3>
+          <p>Sandboxed workers run the queue in parallel. Each step tries the cheapest way first and escalates only when the screen surprises it, up to a person who can answer or take over the screen.</p>
+          <span class="tag">web today · Windows desktop in preview</span>
+        </article>
+      </div>
+
+      <div class="feature">
+        <div class="copy reveal">
+          <span class="eyebrow">Compiled, not scripted</span>
+          <h3>Every step knows how to find its element and how to check it worked.</h3>
+          <p>Each step carries a ladder of ways to locate its target: stable ids, labels, nearby text, a picture of the element, a description for the agent. After it acts, it checks the result: the right window, the right value, the right record.</p>
+          <ul class="ticks">
+            <li>Inputs, formats and policies inferred from the narration and your documents</li>
+            <li>Login, MFA, expired sessions and pop-ups handled by the platform</li>
+            <li>Readable by the business: the narration stays attached as each step's rationale</li>
+          </ul>
+        </div>
+        <figure class="shot reveal d1" style="margin:0"><img src="assets/workflow.webp" width="1800" height="1125" alt="Arpa workflow view: steps compiled from a recording, with an inspector showing how the worker finds the Vendor field" loading="lazy"><figcaption>A process compiled from one recording, zero hand edits</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ LADDER -->
+  <section class="dark" id="ladder">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">Why it's cheap and why it doesn't break</span>
+        <h2>Deterministic first. <span class="serif">AI</span> when it matters.</h2>
+        <p class="lead">Scripted bots break when a button moves. Agents that think about every click cost cents per click and still guess. Arpa replays what it knows in milliseconds and escalates one rung at a time. Every rescue becomes a proposed fix, so the workflow gets cheaper the more it runs.</p>
+      </div>
+      <div class="ladder">
+        <div class="rung hot reveal"><span class="t">T0</span><h4>Remembered</h4><p>The exact element that worked last time on this screen.</p><span class="cost">~ 0 · ms</span></div>
+        <div class="rung hot reveal d1"><span class="t">T1</span><h4>Exact anchor</h4><p>Stable ids, accessibility names, test ids, labels.</p><span class="cost">~ 0 · ms</span></div>
+        <div class="rung reveal d2"><span class="t">T2</span><h4>Fuzzy match</h4><p>Renamed ids and moved labels, scored for uniqueness.</p><span class="cost">~ 0 · ms</span></div>
+        <div class="rung reveal d3"><span class="t">T3</span><h4>Vision</h4><p>A small vision model points at the element on the screenshot.</p><span class="cost">~ €0.001</span></div>
+        <div class="rung reveal d4"><span class="t">T4</span><h4>Agent</h4><p>A bounded computer-use agent recovers the step, within a budget.</p><span class="cost">cents</span></div>
+        <div class="rung person reveal d5"><span class="t">T5</span><h4>A person</h4><p>Answers a question or takes over the screen. The answer teaches the workflow.</p><span class="cost">your call</span></div>
+      </div>
+      <div class="mix">
+        <div class="reveal">
+          <h4>How 228 steps of HR onboarding were resolved, through SSO on a SharePoint-style intranet</h4>
+          <div class="bar" role="img" aria-label="Remembered 65%, exact anchor 25%, no element needed 7%, people 3%, vision and agent 0%">
+            <span style="width:65.3%;background:linear-gradient(90deg,#3f68e6,#4f7bff)">Remembered 65%</span>
+            <span style="width:24.6%;background:#2a4bb3">Exact 25%</span>
+            <span style="width:7.5%;background:#4a433a">7%</span>
+            <span style="width:2.6%;background:var(--human)"></span>
+          </div>
+          <div class="legend"><span><i style="background:#4f7bff"></i>Remembered</span><span><i style="background:#2a4bb3"></i>Exact anchor</span><span><i style="background:#4a433a"></i>Navigation and waits</span><span><i style="background:var(--human)"></i>Approvals by a person</span><span><i style="background:#666"></i>Vision and agent: 0</span></div>
+        </div>
+        <div class="side reveal d1"><p><b>€0.0106 per new hire</b>, all model calls included, and the per-step cost keeps falling as successful recoveries are folded back into the workflow.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PEOPLE -->
+  <section class="block" id="people">
+    <div class="wrap">
+      <div class="feature flip" style="margin-top:0">
+        <div class="copy reveal">
+          <span class="eyebrow" style="color:var(--human)">People in the loop</span>
+          <h3>Autonomy you set per process, not a black box.</h3>
+          <p>Start in practice mode, where workers do everything except the final save. Move to "ask before sensitive steps". Go fully autonomous when the numbers say so. Whatever you choose, an unsure worker asks instead of guessing.</p>
+          <ul class="ticks human">
+            <li>Approvals for sensitive steps, such as booking, paying or submitting</li>
+            <li>Questions come with the worker's own best guess and a screenshot</li>
+            <li>Live takeover: your mouse and keyboard drive the worker's screen, then hand it back</li>
+            <li>Every answer is recorded, and recurring ones become proposed workflow changes</li>
+          </ul>
+        </div>
+        <figure class="shot reveal d1" style="margin:0"><img src="assets/inbox-approval.webp" width="1800" height="1125" alt="Arpa inbox: a worker asks a supervisor to approve clicking Save to book a purchase invoice" loading="lazy"><figcaption>The inbox: a worker waits for approval before booking</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="copy reveal">
+          <span class="eyebrow">Every run on the record</span>
+          <h3>See exactly what the worker did, and why it is right.</h3>
+          <p>Each run keeps a screenshot per step, how each element was found, what it cost, and an AI reviewer's findings, which compare the work item with what actually landed in the system. Postconditions catch mistakes as they happen.</p>
+          <ul class="ticks">
+            <li>An append-only audit log of every action by people, workers and the platform</li>
+            <li>An independent AI review, sampled per process, plus reconciliation with the system of record</li>
+            <li>Expired sessions, pop-ups and lost machines recover on their own</li>
+          </ul>
+        </div>
+        <figure class="shot reveal d1" style="margin:0"><img src="assets/run-detail.webp" width="1800" height="1125" alt="Arpa run detail: step-by-step timeline with tiers and screenshots, cost breakdown and verification by an AI reviewer" loading="lazy"><figcaption>A run that recovered from an expired session on its own</figcaption></figure>
+      </div>
+
+      <div class="feature flip">
+        <div class="copy reveal">
+          <span class="eyebrow">Starts on its own</span>
+          <h3>Work arrives the way it already does.</h3>
+          <p>Point Arpa at the AP mailbox and every e-mailed invoice becomes a work item, with its attachments stored as documents. Watch an SFTP folder, run on a schedule, take a signed webhook from your ERP, or upload a spreadsheet.</p>
+          <ul class="ticks">
+            <li>Mailbox (IMAP), SFTP, schedules, signed webhooks, API and CSV/Excel</li>
+            <li>Deduplicated by message id, file or idempotency key, so nothing is booked twice</li>
+            <li>Documents flow into the run, extracted or attached to the right form field</li>
+          </ul>
+        </div>
+        <figure class="shot reveal d1" style="margin:0"><img src="assets/triggers.webp" width="1800" height="1125" alt="Arpa process settings: triggers for a mailbox, an SFTP folder, a webhook and a schedule" loading="lazy"><figcaption>Mailbox, SFTP, webhook and schedule triggers</figcaption></figure>
+      </div>
+
+      <div class="feature">
+        <div class="copy reveal">
+          <span class="eyebrow">Know what it costs</span>
+          <h3>Cost per item, not a licence per bot.</h3>
+          <p>Every model call goes through one metered gateway. You see the cost per item and per process, which tier did the work, and the time handed back against a human baseline.</p>
+          <ul class="ticks">
+            <li>Hard budgets per run for agent time and spend</li>
+            <li>Cheap open models by default, your own model keys if you prefer</li>
+            <li>Hours saved and return on spend, per process</li>
+          </ul>
+        </div>
+        <figure class="shot reveal d1" style="margin:0"><img src="assets/process-overview.webp" width="1800" height="1125" alt="Arpa process overview: success rate, cost per item and a flow showing 90% of steps run deterministically for 0% of the cost" loading="lazy"><figcaption>90% of steps ran deterministically, for 0% of the cost</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ PROOF -->
+  <section class="block" id="proof">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">Proof, not promises</span>
+        <h2>Measured end to end on <span class="serif">real</span> legacy apps.</h2>
+        <p class="lead">Every scenario runs on the platform as it ships: queue, fleet, approvals, review. The result is then reconciled against the target app's own database.</p>
+      </div>
+      <div class="proof">
+        <article class="card reveal">
+          <span class="k">Finance · AP</span>
+          <div class="score"><b>15/15</b><span>passed</span></div>
+          <h3 style="margin-top:14px">Supplier invoices in a legacy ERP</h3>
+          <p class="what">Expiring passwords, vendor lookups, GL coding from the AP policy, approvals above €10k, duplicates skipped.</p>
+          <dl><dt>per item</dt><dd>€0.0043</dd><dt>p50</dt><dd>12 s</dd></dl>
+        </article>
+        <article class="card reveal d1">
+          <span class="k">Treasury</span>
+          <div class="score"><b>10/10</b><span>passed</span></div>
+          <h3 style="margin-top:14px">SEPA payments with 2FA</h3>
+          <p class="what">Authenticator codes coordinated across parallel workers, a cross-site signing widget, invalid payments sent to a person.</p>
+          <dl><dt>per item</dt><dd>€0.017</dd><dt>2FA</dt><dd>one code per window</dd></dl>
+        </article>
+        <article class="card reveal d2">
+          <span class="k">HR</span>
+          <div class="score"><b>8/8</b><span>passed</span></div>
+          <h3 style="margin-top:14px">Onboarding through SSO</h3>
+          <p class="what">Keycloak sign-in, a five-step wizard, a people picker, an ID document uploaded byte for byte, rejections routed to HR.</p>
+          <dl><dt>per item</dt><dd>€0.0106</dd><dt>vision or agent</dt><dd>0 steps</dd></dl>
+        </article>
+        <article class="card reveal d3">
+          <span class="k">From a recording</span>
+          <div class="score"><b>3/3</b><span>booked</span></div>
+          <h3 style="margin-top:14px">Compiled from one demonstration</h3>
+          <p class="what">A narrated demo became a 15-step process with no hand edits. The fleet booked real invoices; an agent cleared a surprise dialog and proposed the fix.</p>
+          <dl><dt>compile</dt><dd>€0.10–0.16</dd><dt>hand edits</dt><dd>0</dd></dl>
+        </article>
+      </div>
+      <p class="method reveal">Legacy Lab apps are built to fight automation: random password-expiry prompts, ASP.NET ids that change on every load, cross-origin iframes, idle timeouts, duplicate-detection dialogs. Every number here comes from a recorded run report.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ TRUST -->
+  <section class="block" id="trust">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">Trust by design</span>
+        <h2>Built for <span class="serif">European</span> companies and their works councils.</h2>
+        <p class="lead">GDPR and the EU AI Act shaped the architecture from the first line, not a compliance layer added later.</p>
+      </div>
+      <div class="trust">
+        <article class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></div><h3>Models never see secrets</h3><p>Credentials live in a vault and are sealed to one worker session. They are typed at keystroke level only into fields found by structure, and masked in every frame, log and recording.</p></article>
+        <article class="card reveal d1"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="14" width="18" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="7" r="1" fill="currentColor"/><circle cx="7" cy="17" r="1" fill="currentColor"/></svg></div><h3>On your servers</h3><p>The whole platform runs on Docker Compose on your own hardware: the same code as the hosted service, with your network, your vault and your model keys. Air-gapped mode is on the roadmap.</p></article>
+        <article class="card reveal d2"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l3 3v13H4V4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 11h8M8 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Everything on the record</h3><p>An append-only audit log, a screenshot per step, the model routing behind every decision, and human oversight on every sensitive step, ready for AI Act logging and oversight duties.</p></article>
+        <article class="card reveal"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M15 14.6c2.3 0 4.2 1.3 5 4.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3>Works-council mode</h3><p>Recording is started by the employee, with a visible indicator. Recorders are pseudonymised, recordings never feed per-employee analytics, and redaction happens on the device.</p></article>
+        <article class="card reveal d1"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Isolation in the database</h3><p>Every tenant's rows are fenced off by Postgres row-level security, not by application code alone. Roles cover admins, process owners, supervisors, reviewers and auditors.</p></article>
+        <article class="card reveal d2"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1016 0 8 8 0 00-16 0z M4 12h16 M12 4c2.5 2.5 2.5 13.5 0 16 M12 4c-2.5 2.5-2.5 13.5 0 16" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></div><h3>Your models, or ours</h3><p>One model gateway meters every call and enforces budgets. Use the open models we provide, or bring your own keys for Anthropic, OpenAI or any compatible provider.</p></article>
+      </div>
+
+      <div class="deploy">
+        <article class="card reveal"><span class="status now">Available in private preview</span><h3>On-premises</h3><p>One <code>make up</code> and you have the console, the fleet, the vault, single sign-on and the model gateway. Workers connect outbound only, so no inbound firewall holes are needed.</p></article>
+        <article class="card reveal d1"><span class="status soon">On the way</span><h3>Hosted in the EU</h3><p>The same platform, hosted and operated by us in European data centres, with sandboxed Windows and web workers on demand and EU-resident models.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ FINAL -->
+  <section class="final">
+    <div class="wrap">
+      <h2 class="reveal">Stop scripting.<br><span class="serif">Start showing.</span></h2>
+      <p class="lead reveal d1">Arpa is in private preview with a small number of European teams. Bring us the process everyone dreads, and we'll show you a worker doing it.</p>
+      <div class="hero-ctas reveal d2">
+        <a class="btn btn-primary" href="#demo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg>Watch the demo again</a>
+        <a class="btn btn-ghost" href="#proof">See the numbers</a>
+      </div>
+      <footer>
+        <a class="brand" href="#top"><svg aria-hidden="true"><use href="#logo"/></svg>Arpa</a>
+        <span>Agentic RPA for any process done on a screen · Private preview · 2026</span>
+      </footer>
+    </div>
+  </section>
+</main>
+
+<script>
+  (() => {
+    const nav = document.getElementById("nav");
+    const onScroll = () => nav.classList.toggle("solid", window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const items = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) { items.forEach((el) => el.classList.add("in")); return; }
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    items.forEach((el) => io.observe(el));
+
+    // Pause the hero video when it is off screen (battery), resume when back.
+    const video = document.querySelector(".window video");
+    if (video && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      new IntersectionObserver(([e]) => { e.isIntersecting ? video.play().catch(() => {}) : video.pause(); }, { threshold: 0.2 }).observe(video);
+    } else if (video) {
+      video.removeAttribute("autoplay"); video.setAttribute("controls", ""); video.pause();
+    }
+  })();
+</script>
+</body>
+</html>
